@@ -1,0 +1,9 @@
+Entities and value objects are instances.
+Entities are muttable
+Values objects are unmuttable
+
+Aggregates hold multiple entities and value objects, but they are related to one root entity.
+
+Repositories manages the aggregates.
+
+Service with combines and ties together repositories.
