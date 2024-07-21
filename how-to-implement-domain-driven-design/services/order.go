@@ -2,11 +2,13 @@
 package services
 
 import (
+	"context"
 	"log"
 
 	"github.com/arturbaccarin/programmingpercy-go-videos/ddd-go/aggregate"
 	"github.com/arturbaccarin/programmingpercy-go-videos/ddd-go/domain/customer"
 	"github.com/arturbaccarin/programmingpercy-go-videos/ddd-go/domain/customer/memory"
+	"github.com/arturbaccarin/programmingpercy-go-videos/ddd-go/domain/customer/mongo"
 	"github.com/arturbaccarin/programmingpercy-go-videos/ddd-go/domain/product"
 	prodmem "github.com/arturbaccarin/programmingpercy-go-videos/ddd-go/domain/product/memory"
 	"github.com/google/uuid"
@@ -58,6 +60,18 @@ func WithCustomerRepository(cr customer.CustomerRepository) OrderConfiguration {
 func WithMemoryCustomerRepository() OrderConfiguration {
 	cr := memory.New()
 	return WithCustomerRepository(cr)
+}
+
+func WithMongoCustomerRepository(ctx context.Context, connStr string) OrderConfiguration {
+	return func(os *OrderService) error {
+		cr, err := mongo.New(ctx, connStr)
+		if err != nil {
+			return err
+		}
+
+		os.customers = cr
+		return nil
+	}
 }
 
 func WithMemoryProductRepository(products []aggregate.Product) OrderConfiguration {
