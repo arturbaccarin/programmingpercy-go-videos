@@ -8,41 +8,49 @@ type Substractable interface {
 	int | int32 | int64 | float32 | float64 | uint | uint32 | uint64
 }
 
-func Subtract[V Substractable](a, b V) V {
-	return a - b
-}
-
 type Moveable[S Substractable] interface {
-	Move(Substractable)
+	Move(S)
 }
 
-func Move[V Moveable, S Substractable](v V, distance, meters S) {
+func Move[V Moveable[S], S Substractable](v V, distance, meters S) S {
 	v.Move(meters)
 	return Subtract(distance, meters)
 }
 
-type Person struct {
+type Person[S Substractable] struct {
 	Name string
 }
 
-func (p Person) Move(meters Substractable) {
-	fmt.Printf("%s moved %d meters\n", p.Name, meters)
+func (p Person[S]) Move(meters S) {
+	fmt.Printf("%s moved %v meters\n", p.Name, meters)
 }
 
-type Car struct {
+type Car[S Substractable] struct {
 	Name string
 }
 
-func (c Car) Move(meters Substractable) {
-	fmt.Printf("%s moved %d meters\n", c.Name, meters)
+func (c Car[S]) Move(meters S) {
+	fmt.Printf("%s moved %v meters\n", c.Name, meters)
 }
 
 func main() {
-	p := Person{Name: "John"}
-	c := Car{Name: "Ferrari"}
+	p := Person[float64]{Name: "John"}
+	c := Car[int]{Name: "Ferrari"}
 
-	Move(p, 10)
-	Move(c, 10)
+	milesToDestination := 100
+
+	distanceLeft := Move(c, milesToDestination, 95)
+
+	fmt.Println(distanceLeft)
+	fmt.Println(p)
+
+	newDistanceLeft := Move[Person[float64], float64](p, float64(distanceLeft), 100)
+
+	fmt.Println(newDistanceLeft)
+}
+
+func Subtract[V Substractable](a, b V) V {
+	return a - b
 }
 
 /*
