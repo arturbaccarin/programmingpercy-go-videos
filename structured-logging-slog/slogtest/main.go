@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-// 20min
 func main() {
 	logHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{ // NewTextHandler
 		Level:     slog.LevelDebug,
